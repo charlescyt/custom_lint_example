@@ -3,3 +3,5 @@ include: package:choco_lints/package.yaml
 linter:
   rules:
     public_member_api_docs: false
+    always_specify_types: true
+    omit_local_variable_types: false

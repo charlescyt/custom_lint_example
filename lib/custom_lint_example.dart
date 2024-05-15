@@ -7,7 +7,7 @@ PluginBase createPlugin() => _MyCustomLint();
 class _MyCustomLint extends PluginBase {
   @override
   List<LintRule> getLintRules(CustomLintConfigs configs) {
-    return [
+    return <LintRule>[
       const AvoidPrint(),
     ];
   }

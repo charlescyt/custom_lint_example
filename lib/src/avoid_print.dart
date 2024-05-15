@@ -1,7 +1,9 @@
-
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/error/error.dart';
 import 'package:analyzer/error/listener.dart';
+import 'package:analyzer/source/source_range.dart';
+import 'package:analyzer_plugin/utilities/change_builder/change_builder_dart.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 
 class AvoidPrint extends DartLintRule {
@@ -21,8 +23,8 @@ class AvoidPrint extends DartLintRule {
     ErrorReporter reporter,
     CustomLintContext context,
   ) {
-    context.registry.addMethodInvocation((node) {
-      final element = node.methodName.staticElement;
+    context.registry.addMethodInvocation((MethodInvocation node) {
+      final Element? element = node.methodName.staticElement;
       if (element is! FunctionElement) return;
       if (element.name != 'print') return;
       if (!element.library.isDartCore) return;
@@ -32,7 +34,7 @@ class AvoidPrint extends DartLintRule {
   }
 
   @override
-  List<Fix> getFixes() => [UseDeveloperLogFix()];
+  List<Fix> getFixes() => <Fix>[UseDeveloperLogFix()];
 }
 
 class UseDeveloperLogFix extends DartFix {
@@ -44,19 +46,19 @@ class UseDeveloperLogFix extends DartFix {
     AnalysisError analysisError,
     List<AnalysisError> others,
   ) {
-    context.registry.addMethodInvocation((node) {
+    context.registry.addMethodInvocation((MethodInvocation node) {
       if (!node.sourceRange.intersects(analysisError.sourceRange)) return;
 
-      final changeBuilder = reporter.createChangeBuilder(
+      final ChangeBuilder changeBuilder = reporter.createChangeBuilder(
         message: 'Use log from dart:developer instead.',
         priority: 80,
       );
 
-      changeBuilder.addDartFileEdit((builder) {
-        final sourceRange = node.methodName.sourceRange;
-        final result = builder.importLibraryElement(Uri.parse('dart:developer'));
-        final prefix = result.prefix;
-        final replacement = prefix != null ? '$prefix.log' : 'log';
+      changeBuilder.addDartFileEdit((DartFileEditBuilder builder) {
+        final SourceRange sourceRange = node.methodName.sourceRange;
+        final ImportLibraryElementResult result = builder.importLibraryElement(Uri.parse('dart:developer'));
+        final String? prefix = result.prefix;
+        final String replacement = prefix != null ? '$prefix.log' : 'log';
 
         builder.addSimpleReplacement(sourceRange, replacement);
       });
