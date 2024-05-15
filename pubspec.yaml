@@ -1,0 +1,17 @@
+name: custom_lint_example
+description: A starting point for Dart libraries or applications.
+version: 0.1.0
+publish_to: 'none'
+
+environment:
+  sdk: ^3.3.4
+
+dependencies:
+  analyzer: ^6.4.1
+  custom_lint_builder: ^0.6.4
+
+dev_dependencies:
+  choco_lints:
+    git:
+      ref: 1.1.0
+      url: git@github.com:charlescyt/choco_lints.git
