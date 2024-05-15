@@ -1,0 +1,19 @@
+name: example
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.3.4 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  custom_lint: ^0.6.4
+  custom_lint_example:
+    path: ../
+
+flutter:
+  uses-material-design: true
